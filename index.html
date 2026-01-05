@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Game Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Video container -->
+    <div class="video-container">
+        <video id="current-video" autoplay muted>
+            <!-- Video source will be set by JavaScript -->
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+    
+    <!-- Popup 1 (First - only forward) -->
+    <div id="popup1" class="popup-container">
+        <div class="popup-content">
+            <img src="assets/images/popup1.jpg" alt="Popup 1" class="popup-image">
+            <div class="popup-buttons">
+                <button class="action-btn continue-btn" data-next="walk2" title="Continue">
+                    <div class="btn-image-container">
+                        <img src="assets/images/continue-btn.jpg" alt="Continue" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup 2 (Forward & Backward) -->
+    <div id="popup2" class="popup-container">
+        <div class="popup-content">
+            <img src="assets/images/popup2.jpg" alt="Popup 2" class="popup-image">
+            <div class="popup-buttons">
+                <button class="action-btn back-btn" data-prev="reverse1" title="Go Back">
+                    <div class="btn-image-container">
+                        <img src="assets/images/back-btn.jpg" alt="Go Back" class="btn-image">
+                    </div>
+                </button>
+                <button class="action-btn continue-btn" data-next="walk3" title="Continue">
+                    <div class="btn-image-container">
+                        <img src="assets/images/continue-btn.jpg" alt="Continue" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup 3 (Forward & Backward) -->
+    <div id="popup3" class="popup-container">
+        <div class="popup-content">
+            <img src="assets/images/popup3.jpg" alt="Popup 3" class="popup-image">
+            <div class="popup-buttons">
+                <button class="action-btn back-btn" data-prev="reverse2" title="Go Back">
+                    <div class="btn-image-container">
+                        <img src="assets/images/back-btn.jpg" alt="Go Back" class="btn-image">
+                    </div>
+                </button>
+                <button class="action-btn continue-btn" data-next="walk4" title="Continue">
+                    <div class="btn-image-container">
+                        <img src="assets/images/continue-btn.jpg" alt="Continue" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup 4 (Last - only backward) -->
+    <div id="popup4" class="popup-container">
+        <div class="popup-content">
+            <img src="assets/images/popup4.jpg" alt="Popup 4" class="popup-image">
+            <div class="popup-buttons">
+                <button class="action-btn back-btn" data-prev="reverse3" title="Go Back">
+                    <div class="btn-image-container">
+                        <img src="assets/images/back-btn.jpg" alt="Go Back" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

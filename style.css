@@ -1,0 +1,275 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Video container */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#current-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+}
+
+/* Video overlay for blur effect when popup shows */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+}
+
+.video-container.popup-active .video-overlay {
+    opacity: 1;
+}
+
+/* Popup containers */
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* Start hidden */
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+}
+
+.popup-container.active {
+    display: flex; /* Show when active */
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.popup-container.exiting {
+    display: flex !important; /* Keep visible during exit */
+    animation: slideOut 0.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100vw);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100vw);
+        opacity: 0;
+    }
+}
+
+/* Popup image - larger, no border */
+.popup-image {
+    width: 100%;
+    height: auto;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+/* Buttons positioned directly on image corners */
+.popup-buttons {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 20;
+    pointer-events: none;
+    gap: 20px; /* Space between buttons when both are present */
+}
+
+/* Action buttons - Fixed height, auto width based on image */
+.action-btn {
+    padding: 0;
+    height: 70px; /* FIXED HEIGHT */
+    border-radius: 0; /* Changed from 8px to 0 for sharp corners */
+    cursor: pointer;
+    display: inline-block; /* Changed to inline-block */
+    transition: all 0.4s ease;
+    border: none; /* REMOVE the border completely */
+    pointer-events: auto;
+    position: relative;
+    opacity: 1; /* Changed from 0.9 to 1 */
+    animation: buttonFadeIn 0.6s ease forwards;
+    animation-delay: 0.8s;
+    transform: translateY(20px);
+    overflow: hidden;
+    box-shadow: none; /* REMOVE the shadow */
+    
+    /* Allow button to size based on content/image */
+    width: auto; /* Auto width based on image */
+    min-width: 80px; /* Minimum width when no image */
+    vertical-align: middle;
+    background: transparent; /* REMOVE the gray background */
+}
+
+@keyframes buttonFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-btn:hover {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Button image container - This is key */
+.btn-image-container {
+    display: block;
+    height: 100%; /* Fill the button height */
+    width: auto; /* Width will adjust to maintain aspect ratio */
+}
+
+/* Button image - fills the container height, width adjusts automatically */
+.btn-image {
+    display: block;
+    height: 100%; /* Fixed height (80px) */
+    width: auto; /* Width adjusts to maintain image aspect ratio */
+    object-fit: contain; /* Show entire image without cropping */
+    pointer-events: none; /* Don't interfere with button clicks */
+}
+
+/* Hide icons if they exist */
+.action-btn i {
+    display: none;
+}
+
+/* Add glow effect on hover */
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%);
+    border-radius: 10px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.action-btn:hover::before {
+    opacity: 1;
+    animation: buttonGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes buttonGlow {
+    from {
+        opacity: 0.3;
+    }
+    to {
+        opacity: 0.7;
+    }
+}
+
+/* Button press effect */
+.action-btn:active {
+    transform: translateY(-2px) scale(0.98);
+    transition: transform 0.1s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Single button positioning */
+.popup-content:has(.continue-btn:only-of-type) .popup-buttons {
+    justify-content: flex-end;
+}
+
+.popup-content:has(.back-btn:only-of-type) .popup-buttons {
+    justify-content: flex-start;
+}
+
+/* Responsive design for buttons */
+@media (max-width: 768px) {
+    .popup-buttons {
+        bottom: 30px;
+        padding: 0 30px;
+        gap: 15px;
+    }
+    
+    .action-btn {
+        height: 60px; /* Smaller height on tablets */
+        min-width: 70px;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .popup-buttons {
+        bottom: 25px;
+        padding: 0 25px;
+        gap: 10px;
+    }
+    
+    .action-btn {
+        height: 50px; /* Smaller height on phones */
+        min-width: 60px;
+        border-radius: 5px;
+        border-width: 2px;
+    }
+}
