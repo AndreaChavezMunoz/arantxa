@@ -1,4 +1,6 @@
+// ===============================
 // Video sequence configuration
+// ===============================
 const VIDEO_SEQUENCE = {
     // Forward videos
     walk1: { file: 'assets/videos/walk1.mp4', nextPopup: 'popup1' },
@@ -8,7 +10,7 @@ const VIDEO_SEQUENCE = {
     walk5: { file: 'assets/videos/walk5.mp4', nextPopup: 'popup5' },
     walk6: { file: 'assets/videos/walk6.mp4', nextPopup: 'popup6' }, // DEAD END
 
-    // Reverse videos (reverse1 exists but unused)
+    // Reverse videos
     reverse1: { file: null, nextPopup: 'popup1' },
     reverse2: { file: 'assets/videos/reverse2.mp4', nextPopup: 'popup2' },
     reverse3: { file: 'assets/videos/reverse3.mp4', nextPopup: 'popup3' },
@@ -16,85 +18,108 @@ const VIDEO_SEQUENCE = {
     reverse5: { file: 'assets/videos/reverse5.mp4', nextPopup: 'popup5' }
 };
 
-
+// ===============================
 // DOM Elements
+// ===============================
 const videoElement = document.getElementById('current-video');
 const videoContainer = document.querySelector('.video-container');
-const videoOverlay = document.querySelector('.video-overlay');
 const popupContainers = document.querySelectorAll('.popup-container');
 
 const bgAudio = document.getElementById('bg-audio');
 const fxAudio = document.getElementById('fx-audio');
 
-let audioStarted = false;
+const landing = document.getElementById('landing');
+const startBtn = document.getElementById('start-btn');
 
+// ===============================
 // State
-let currentVideoId = 'walk1';
+// ===============================
+let currentVideoId = null;
 let isTransitioning = false;
 let activePopup = null;
+let audioStarted = false;
 
-// Initialize - Start with first video
+// ===============================
+// INIT (runs on page load)
+// ===============================
 function init() {
-    loadAndPlayVideo('walk1');
-    
-    // Setup all button event listeners
+    preloadVideos();               // load videos while landing is visible
     setupButtonListeners();
-    
-    // Video event listeners
     videoElement.addEventListener('ended', handleVideoEnded);
-    
-    // Preload all videos for smooth transitions
-    preloadVideos();
 }
 
-// Load and play a video
+// ===============================
+// START BUTTON (user interaction)
+// ===============================
+if (startBtn && landing) {
+    startBtn.addEventListener('click', () => {
+        if (audioStarted) return;
+        audioStarted = true;
+
+        // ---- AUDIO ----
+        bgAudio.volume = 0.6;
+        bgAudio.play().catch(() => {});
+
+        setTimeout(() => {
+            fxAudio.play().catch(() => {});
+        }, 3500);
+
+        // ---- VIDEO ----
+        loadAndPlayVideo('walk1');
+
+        // ---- LANDING FADE OUT ----
+        landing.classList.add('fade-out');
+        setTimeout(() => {
+            landing.style.display = 'none';
+        }, 800);
+    });
+}
+
+// ===============================
+// VIDEO LOGIC
+// ===============================
 function loadAndPlayVideo(videoId) {
     if (isTransitioning || !VIDEO_SEQUENCE[videoId]) return;
-    
     isTransitioning = true;
-    
-    // Animate out current popup if exists
+
     if (activePopup) {
         hidePopup(activePopup, () => {
-            // After popup slides out, load new video
             executeVideoLoad(videoId);
         });
     } else {
-        // No active popup, load directly
         executeVideoLoad(videoId);
     }
 }
 
 function executeVideoLoad(videoId) {
     currentVideoId = videoId;
-    
-    // Remove blur overlay
     videoContainer.classList.remove('popup-active');
-    
-    // Set video source
-    videoElement.src = VIDEO_SEQUENCE[videoId].file;
-    
-    // Load and play
+
+    const file = VIDEO_SEQUENCE[videoId].file;
+    if (!file) {
+        isTransitioning = false;
+        return;
+    }
+
+    videoElement.src = file;
     videoElement.load();
-    videoElement.play().then(() => {
-        isTransitioning = false;
-    }).catch(error => {
-        console.log('Auto-play prevented, will play after interaction');
-        isTransitioning = false;
-    });
+
+    videoElement.play()
+        .then(() => {
+            isTransitioning = false;
+        })
+        .catch(() => {
+            isTransitioning = false;
+        });
 }
 
-// Handle video ended
 function handleVideoEnded() {
-    // Freeze on last frame
     videoElement.pause();
-    
-    // Add blur overlay with delay for smooth transition
+
     setTimeout(() => {
         videoContainer.classList.add('popup-active');
-        
-        // Show the appropriate popup
-        const nextPopup = VIDEO_SEQUENCE[currentVideoId].nextPopup;
+
+        const nextPopup = VIDEO_SEQUENCE[currentVideoId]?.nextPopup;
         if (nextPopup) {
             setTimeout(() => {
                 showPopup(nextPopup);
@@ -103,95 +128,64 @@ function handleVideoEnded() {
     }, 100);
 }
 
-// Show a specific popup
+// ===============================
+// POPUPS
+// ===============================
 function showPopup(popupId) {
     const popup = document.getElementById(popupId);
-    if (popup) {
-        // Make sure popup is visible before adding active class
-        popup.style.display = 'flex';
-        
-        // Small delay to ensure display is set before animation
-        setTimeout(() => {
-            activePopup = popupId;
-            popup.classList.add('active');
-            popup.classList.remove('exiting');
-        }, 10);
-    }
+    if (!popup) return;
+
+    popup.style.display = 'flex';
+
+    setTimeout(() => {
+        activePopup = popupId;
+        popup.classList.add('active');
+        popup.classList.remove('exiting');
+    }, 10);
 }
 
-// Hide a popup with animation
 function hidePopup(popupId, callback) {
     const popup = document.getElementById(popupId);
-    if (popup) {
-        // Add exiting class to trigger slide-out animation
-        popup.classList.add('exiting');
-        popup.classList.remove('active');
-        
-        // Wait for animation to complete (match CSS animation duration)
-        setTimeout(() => {
-            // Hide the popup completely
-            popup.style.display = 'none';
-            popup.classList.remove('exiting');
-            
-            // Remove the display none after animation so it can slide in again later
-            setTimeout(() => {
-                popup.style.display = '';
-            }, 100);
-            
-            activePopup = null;
-            if (callback) callback();
-        }, 800); // Match slideOut animation duration in CSS (0.8s)
-    } else if (callback) {
-        callback();
+    if (!popup) {
+        callback && callback();
+        return;
     }
-}
 
-// Hide all popups
-function hideAllPopups() {
-    popupContainers.forEach(popup => {
-        popup.classList.remove('active', 'exiting');
+    popup.classList.add('exiting');
+    popup.classList.remove('active');
+
+    setTimeout(() => {
         popup.style.display = 'none';
-        
-        // Reset display after a moment
-        setTimeout(() => {
-            popup.style.display = '';
-        }, 100);
-    });
-    activePopup = null;
+        popup.classList.remove('exiting');
+        activePopup = null;
+        callback && callback();
+    }, 800);
 }
 
-// Setup button event listeners
+// ===============================
+// BUTTON LISTENERS
+// ===============================
 function setupButtonListeners() {
-    // Continue buttons
     document.querySelectorAll('.continue-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', e => {
             if (isTransitioning) return;
-            const nextVideo = e.target.closest('.continue-btn').dataset.next;
-            if (nextVideo) {
-                loadAndPlayVideo(nextVideo);
-            }
+            const next = e.currentTarget.dataset.next;
+            if (next) loadAndPlayVideo(next);
         });
     });
-    
-    // Back buttons
+
     document.querySelectorAll('.back-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', e => {
             if (isTransitioning) return;
-            const prevVideo = e.target.closest('.back-btn').dataset.prev;
-            if (prevVideo) {
-                loadAndPlayVideo(prevVideo);
-            }
+            const prev = e.currentTarget.dataset.prev;
+            if (prev) loadAndPlayVideo(prev);
         });
     });
 
-    // Restart button
     document.querySelectorAll('.restart-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            window.location.reload();
-        });
+        btn.addEventListener('click', () => window.location.reload());
     });
 
-    // Download PDF button
     document.querySelectorAll('.download-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const link = document.createElement('a');
@@ -200,31 +194,24 @@ function setupButtonListeners() {
             link.click();
         });
     });
-
 }
 
-// Preload all videos for smooth transitions
+// ===============================
+// PRELOAD VIDEOS
+// ===============================
 function preloadVideos() {
     Object.values(VIDEO_SEQUENCE).forEach(video => {
-        if (!video.file) return; 
-
-        const preloadVideo = document.createElement('video');
-        preloadVideo.src = video.file;
-        preloadVideo.preload = 'auto';
+        if (!video.file) return;
+        const v = document.createElement('video');
+        v.src = video.file;
+        v.preload = 'auto';
     });
 }
 
-
-// Start when page loads
+// ===============================
+// START APP
+// ===============================
 window.addEventListener('DOMContentLoaded', init);
 
-// Fallback: If video doesn't autoplay, allow clicking anywhere to start
-document.addEventListener('click', () => {
-    if (videoElement.paused && !isTransitioning && videoElement.src) {
-        videoElement.play();
-    }
-}, { once: true });
-
-// Debug info
 console.log('Video Game Experience Loaded');
 console.log('Video sequence:', Object.keys(VIDEO_SEQUENCE));
