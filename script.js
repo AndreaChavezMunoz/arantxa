@@ -23,6 +23,11 @@ const videoContainer = document.querySelector('.video-container');
 const videoOverlay = document.querySelector('.video-overlay');
 const popupContainers = document.querySelectorAll('.popup-container');
 
+const bgAudio = document.getElementById('bg-audio');
+const fxAudio = document.getElementById('fx-audio');
+
+let audioStarted = false;
+
 // State
 let currentVideoId = 'walk1';
 let isTransitioning = false;
