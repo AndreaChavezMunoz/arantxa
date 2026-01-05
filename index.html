@@ -68,19 +68,63 @@
         </div>
     </div>
 
-    <!-- Popup 4 (Last - only backward) -->
+    <!-- Popup 4 (Forward & Backward) -->
     <div id="popup4" class="popup-container">
         <div class="popup-content">
-            <img src="assets/images/popup4.jpg" alt="Popup 4" class="popup-image">
+            <img src="assets/images/popup5.jpg" alt="Popup 4" class="popup-image">
             <div class="popup-buttons">
-                <button class="action-btn back-btn" data-prev="reverse3" title="Go Back">
+                <button class="action-btn back-btn" data-prev="reverse3">
                     <div class="btn-image-container">
-                        <img src="assets/images/back-btn.jpg" alt="Go Back" class="btn-image">
+                        <img src="assets/images/back-btn.jpg" class="btn-image">
+                    </div>
+                </button>
+                <button class="action-btn continue-btn" data-next="walk5">
+                    <div class="btn-image-container">
+                        <img src="assets/images/continue-btn.jpg" class="btn-image">
                     </div>
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Popup 5 (Forward & Backward) -->
+    <div id="popup5" class="popup-container">
+        <div class="popup-content">
+            <img src="assets/images/popup5.jpg" alt="Popup 5" class="popup-image">
+            <div class="popup-buttons">
+                <button class="action-btn back-btn" data-prev="reverse4">
+                    <div class="btn-image-container">
+                        <img src="assets/images/back-btn.jpg" class="btn-image">
+                    </div>
+                </button>
+                <button class="action-btn continue-btn" data-next="walk6">
+                    <div class="btn-image-container">
+                        <img src="assets/images/continue-btn.jpg" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup 6 (Dead End) -->
+    <div id="popup6" class="popup-container">
+        <div class="popup-content">
+            <div class="popup-buttons">
+                <button class="action-btn restart-btn">
+                    <div class="btn-image-container">
+                        <img src="assets/images/restart-btn.jpg" class="btn-image">
+                    </div>
+                </button>
+                <button class="action-btn download-btn">
+                    <div class="btn-image-container">
+                        <img src="assets/images/download-btn.jpg" class="btn-image">
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
 
     <script src="script.js"></script>
 </body>

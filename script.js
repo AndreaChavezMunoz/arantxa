@@ -1,16 +1,21 @@
 // Video sequence configuration
 const VIDEO_SEQUENCE = {
     // Forward videos
-    'walk1': { file: 'assets/videos/walk1.mp4', nextPopup: 'popup1' },
-    'walk2': { file: 'assets/videos/walk2.mp4', nextPopup: 'popup2' },
-    'walk3': { file: 'assets/videos/walk3.mp4', nextPopup: 'popup3' },
-    'walk4': { file: 'assets/videos/walk4.mp4', nextPopup: 'popup4' },
-    
-    // Reverse videos  
-    'reverse1': { file: 'assets/videos/reverse1.mp4', nextPopup: 'popup1' },
-    'reverse2': { file: 'assets/videos/reverse2.mp4', nextPopup: 'popup2' },
-    'reverse3': { file: 'assets/videos/reverse3.mp4', nextPopup: 'popup3' }
+    walk1: { file: 'assets/videos/walk1.mp4', nextPopup: 'popup1' },
+    walk2: { file: 'assets/videos/walk2.mp4', nextPopup: 'popup2' },
+    walk3: { file: 'assets/videos/walk3.mp4', nextPopup: 'popup3' },
+    walk4: { file: 'assets/videos/walk4.mp4', nextPopup: 'popup4' },
+    walk5: { file: 'assets/videos/walk5.mp4', nextPopup: 'popup5' },
+    walk6: { file: 'assets/videos/walk6.mp4', nextPopup: 'popup6' }, // DEAD END
+
+    // Reverse videos (reverse1 exists but unused)
+    reverse1: { file: null, nextPopup: 'popup1' },
+    reverse2: { file: 'assets/videos/reverse2.mp4', nextPopup: 'popup2' },
+    reverse3: { file: 'assets/videos/reverse3.mp4', nextPopup: 'popup3' },
+    reverse4: { file: 'assets/videos/reverse4.mp4', nextPopup: 'popup4' },
+    reverse5: { file: 'assets/videos/reverse5.mp4', nextPopup: 'popup5' }
 };
+
 
 // DOM Elements
 const videoElement = document.getElementById('current-video');
@@ -173,16 +178,37 @@ function setupButtonListeners() {
             }
         });
     });
+
+    // Restart button
+    document.querySelectorAll('.restart-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            window.location.reload();
+        });
+    });
+
+    // Download PDF button
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = 'assets/info/info.pdf';
+            link.download = 'info.pdf';
+            link.click();
+        });
+    });
+
 }
 
 // Preload all videos for smooth transitions
 function preloadVideos() {
     Object.values(VIDEO_SEQUENCE).forEach(video => {
+        if (!video.file) return; 
+
         const preloadVideo = document.createElement('video');
         preloadVideo.src = video.file;
         preloadVideo.preload = 'auto';
     });
 }
+
 
 // Start when page loads
 window.addEventListener('DOMContentLoaded', init);
