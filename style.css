@@ -273,3 +273,111 @@ body {
         border-width: 2px;
     }
 }
+
+/* NEW: Vertical button layout for popup6 */
+#popup6 .popup-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#popup6 .popup-buttons {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px; /* More space between buttons */
+    width: 100%;
+    padding: 20px;
+    height: 100%;
+}
+
+#popup6 .action-btn {
+    width: 80%; /* Make buttons wider */
+    max-width: 400px; /* Increased maximum width */
+    height: 180px; /* Much taller buttons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0; /* Keep sharp corners */
+}
+
+#popup6 .btn-image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#popup6 .btn-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Make buttons even bigger on larger screens */
+@media (min-width: 1024px) {
+    #popup6 .action-btn {
+        height: 140px;
+        max-width: 450px;
+    }
+    #popup6 .popup-buttons {
+        gap: 50px;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #popup6 .popup-buttons {
+        gap: 30px;
+    }
+    
+    #popup6 .action-btn {
+        height: 100px;
+        width: 85%;
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 480px) {
+    #popup6 .popup-buttons {
+        gap: 25px;
+    }
+    
+    #popup6 .action-btn {
+        height: 90px;
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* Bigger slide up animation */
+@keyframes slideUpFadeInBig {
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#popup6 .action-btn {
+    animation: slideUpFadeInBig 0.7s ease forwards;
+    animation-delay: 0.8s;
+    transform: translateY(60px);
+    opacity: 0;
+}
+
+#popup6 .action-btn:nth-child(1) {
+    animation-delay: 0.8s;
+}
+
+#popup6 .action-btn:nth-child(2) {
+    animation-delay: 1.0s;
+}
