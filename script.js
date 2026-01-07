@@ -31,6 +31,9 @@ const fxAudio = document.getElementById('fx-audio');
 const landing = document.getElementById('landing');
 const startBtn = document.getElementById('start-btn');
 
+const loader = document.getElementById('loader');
+
+
 // ===============================
 // State
 // ===============================
@@ -38,22 +41,28 @@ let currentVideoId = null;
 let isTransitioning = false;
 let activePopup = null;
 let audioStarted = false;
+let walk1Ready = false;
+
 
 // ===============================
 // INIT (runs on page load)
 // ===============================
+
 function init() {
-    preloadVideos();               // load videos while landing is visible
+    startBtn.classList.add('disabled');
+    preloadVideos();
     setupButtonListeners();
     videoElement.addEventListener('ended', handleVideoEnded);
 }
+
 
 // ===============================
 // START BUTTON (user interaction)
 // ===============================
 if (startBtn && landing) {
     startBtn.addEventListener('click', () => {
-        if (audioStarted) return;
+        if (!walk1Ready || audioStarted) return;
+
         audioStarted = true;
 
         // ---- AUDIO ----
@@ -199,14 +208,32 @@ function setupButtonListeners() {
 // ===============================
 // PRELOAD VIDEOS
 // ===============================
+
 function preloadVideos() {
-    Object.values(VIDEO_SEQUENCE).forEach(video => {
+    Object.entries(VIDEO_SEQUENCE).forEach(([id, video]) => {
         if (!video.file) return;
+
         const v = document.createElement('video');
         v.src = video.file;
         v.preload = 'auto';
+
+        // SOLO walk1 desbloquea la experiencia
+        if (id === 'walk1') {
+            v.addEventListener('canplaythrough', () => {
+                walk1Ready = true;
+                unlockStart();
+            }, { once: true });
+        }
     });
 }
+
+function unlockStart() {
+    if (!walk1Ready) return;
+
+    loader.classList.add('hidden');
+    startBtn.classList.remove('disabled');
+}
+
 
 // ===============================
 // START APP
